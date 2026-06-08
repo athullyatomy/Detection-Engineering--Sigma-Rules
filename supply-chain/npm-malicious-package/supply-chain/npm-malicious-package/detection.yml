@@ -1,6 +1,4 @@
 
-Sigmal Rule:
-
 title: Suspicious Outbound Connection from npm or Node Process
 id: 71f8155e-391d-4f6c-9951-797875fbcc36
 status: experimental
