@@ -23,17 +23,6 @@ Each use case includes:
 
 ---
 
-##  Example
-
-### Malicious npm Package (Supply Chain Attack)
-
-- Developer installs compromised package  
-- Hidden script executes  
-- Credentials are exfiltrated  
-- Outbound connection to attacker domain  
-
----
-
 ## Author
 
 Athullya Tomy  
