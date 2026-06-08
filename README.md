@@ -1,4 +1,4 @@
-# Detection-Engineering--Sigma-Rules
+# Detection-Engineering-Sigma-Rules
 
 ##  Overview
 
