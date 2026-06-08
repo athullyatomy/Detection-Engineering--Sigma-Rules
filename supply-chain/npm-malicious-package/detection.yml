@@ -1,59 +1,53 @@
-title: Suspicious Outbound Connection from npm or Node Process
+title: Suspicious npm postinstall Script Execution (Supply Chain Attack)
 id: 71f8155e-391d-4f6c-9951-797875fbcc36
 status: experimental
+
 description: |
-  Detects suspicious outbound network connections initiated by npm, node, or developer tools,
-  which may indicate supply chain compromise or malicious npm package execution.
+  Detects suspicious process execution triggered by npm postinstall hooks,
+  as observed in the UNC1069 / North Korean Axios npm supply chain attack (March 2026).
+  Threat actors injected a malicious postinstall hook in a phantom dependency
+  (plain-crypto-js) to silently execute a dropper and deploy malware.
+
 references:
   - https://cloud.google.com/blog/topics/threat-intelligence/north-korea-threat-actor-targets-axios-npm-package
   - https://thehackernews.com/2026/04/google-attributes-axios-npm-supply.html
+
 author: Athullya Tomy
-date: 2026-06-08
+date: 2026-0-0
+
 tags:
-  - attack.initial_access
   - attack.execution
-  - attack.exfiltration
-  - attack.t1195
-  - attack.t1041
+  - attack.t1195.001
+  - attack.t1059.007
+  - attack.t1543
 
 logsource:
-  category: network_connection
+  category: process_creation
   product: windows
 
 detection:
-  selection_process:
-    Image|endswith:
+  selection:
+    ParentImage|endswith:
       - '\node.exe'
-      - '\npm.exe'
-      - '\npx.exe'
-      - '\code.exe'
-      - '\bash.exe'
+      - '\npm.cmd'
+      - '\npx.cmd'
+    CommandLine|contains:
+      - 'setup.js'
+      - 'postinstall'
+      - 'plain-crypto-js'
 
-  selection_suspicious_domain:
-    DestinationHostname|contains:
-      - 'getsession'
-      - 'filev2'
-      - 'ngrok'
-      - 'pastebin'
-      - 'transfer.sh'
+  suspicious_child:
+    Image|endswith:
+      - '\powershell.exe'
+      - '\cmd.exe'
+      - '\wscript.exe'
+      - '\curl.exe'
+      - '\certutil.exe'
 
-  filter_legit:
-    DestinationHostname|contains:
-      - 'github.com'
-      - 'registry.npmjs.org'
-      - 'nodejs.org'
-
-  condition: selection_process and selection_suspicious_domain and not filter_legit
-
-fields:
-  - Image
-  - DestinationHostname
-  - DestinationIp
-  - DestinationPort
-  - User
+  condition: selection and suspicious_child
 
 falsepositives:
-  - Legitimate development activity
-  - Authorized external tools
+  - Legitimate build tools running postinstall scripts
+  - Developer machines running custom npm hooks
 
-level: medium
+level: high
