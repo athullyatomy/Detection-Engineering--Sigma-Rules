@@ -1,0 +1,105 @@
+This detection focuses on identifying potential supply chain attacks via malicious npm packages, similar to the Mini Shai‑Hulud campaign (May 2026).
+In such attacks:
+
+A developer installs a compromised package
+Malicious scripts execute automatically (preinstall, postinstall)
+The script initiates outbound connections to attacker-controlled infrastructure
+Credentials (GitHub tokens, API keys, cloud secrets) may be exfiltrated
+
+This rule detects anomalous outbound connections triggered by developer tools (npm/node/code) to suspicious or newly observed domains.
+
+Detection Logic
+
+Process: npm, node, code, bash
+Network connection to:
+
+Unknown / newly observed domains
+Suspicious TLDs or domains not previously contacted
+
+
+Context:
+
+Triggered during package install phase
+Developer workstation activity
+
+his rule will catch cases where:
+A developer installs a package
+ npm executes hidden script
+Script makes outbound connection to suspicious domain
+Example:
+npm install <malicious-package>
+   ↓
+node.exe → filev2.getsession[.]org
+
+Future Enhancements
+
+Add newly registered domain detection (NRD)
+Correlate with:
+
+process_creation events
+npm install command-line logs
+
+
+Add DNS + Proxy + EDR correlation
+Detect abnormal GitHub token usage post-execution
+
+Sigma Rule
+title: Suspicious Outbound Connection from npm or Node Process
+id: b3f9c9e7-8b2a-4a6a-9e2e-npm-supplychain
+status: experimental
+description: |
+  Detects suspicious outbound network connections initiated by npm, node, or developer tools,
+  which may indicate supply chain compromise or malicious npm package execution.
+
+author: Athullya Tomy
+date: 2026-06-08
+tags:
+  - attack.initial_access
+  - attack.execution
+  - attack.exfiltration
+  - attack.t1195        # Supply Chain Compromise
+  - attack.t1041        # Exfiltration Over C2 Channel
+
+logsource:
+  category: network_connection
+  product: windows
+
+detection:
+  selection_process:
+    Image|endswith:
+      - '\node.exe'
+      - '\npm.exe'
+      - '\npx.exe'
+      - '\code.exe'
+      - '\bash.exe'
+
+  selection_suspicious_domain:
+    DestinationHostname|contains:
+      - 'getsession'
+      - 'filev2'
+      - 'pastebin'
+      - 'ngrok'
+      - 'transfer.sh'
+      - 'anonfiles'
+
+  filter_legitimate_domains:
+    DestinationHostname|contains:
+      - 'github.com'
+      - 'registry.npmjs.org'
+      - 'nodejs.org'
+      - 'microsoft.com'
+
+  condition: selection_process and selection_suspicious_domain and not filter_legitimate_domains
+
+fields:
+  - Image
+  - DestinationHostname
+  - DestinationIp
+  - DestinationPort
+  - User
+
+falsepositives:
+  - Developers using legitimate tunneling or file-sharing services
+  - Internal dev/test tools
+
+level: medium
