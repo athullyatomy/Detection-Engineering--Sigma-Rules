@@ -4,7 +4,9 @@ status: experimental
 description: |
   Detects suspicious outbound network connections initiated by npm, node, or developer tools,
   which may indicate supply chain compromise or malicious npm package execution.
-
+references:
+  - https://cloud.google.com/blog/topics/threat-intelligence/north-korea-threat-actor-targets-axios-npm-package
+  - https://thehackernews.com/2026/04/google-attributes-axios-npm-supply.html
 author: Athullya Tomy
 date: 2026-06-08
 tags:
