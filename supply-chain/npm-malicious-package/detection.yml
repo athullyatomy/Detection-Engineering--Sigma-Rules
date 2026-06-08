@@ -1,0 +1,57 @@
+title: Suspicious Outbound Connection from npm or Node Process
+id: 71f8155e-391d-4f6c-9951-797875fbcc36
+status: experimental
+description: |
+  Detects suspicious outbound network connections initiated by npm, node, or developer tools,
+  which may indicate supply chain compromise or malicious npm package execution.
+
+author: Athullya Tomy
+date: 2026-06-08
+tags:
+  - attack.initial_access
+  - attack.execution
+  - attack.exfiltration
+  - attack.t1195
+  - attack.t1041
+
+logsource:
+  category: network_connection
+  product: windows
+
+detection:
+  selection_process:
+    Image|endswith:
+      - '\node.exe'
+      - '\npm.exe'
+      - '\npx.exe'
+      - '\code.exe'
+      - '\bash.exe'
+
+  selection_suspicious_domain:
+    DestinationHostname|contains:
+      - 'getsession'
+      - 'filev2'
+      - 'ngrok'
+      - 'pastebin'
+      - 'transfer.sh'
+
+  filter_legit:
+    DestinationHostname|contains:
+      - 'github.com'
+      - 'registry.npmjs.org'
+      - 'nodejs.org'
+
+  condition: selection_process and selection_suspicious_domain and not filter_legit
+
+fields:
+  - Image
+  - DestinationHostname
+  - DestinationIp
+  - DestinationPort
+  - User
+
+falsepositives:
+  - Legitimate development activity
+  - Authorized external tools
+
+level: medium
