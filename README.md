@@ -1,2 +1,42 @@
 # Detection-Engineering--Sigma-Rules
-This repository contains real-world attack scenarios and corresponding Sigma rules, designed to help detect modern threats using behavioral detection techniques across supply chain, identity, cloud, and endpoint environments
+# 🔐 Detection Engineering | Sigma Use Cases
+
+## 📌 Overview
+
+This repository contains real-world attack scenarios and corresponding Sigma rules, designed to help detect modern threats using behavioral detection techniques across supply chain, identity, cloud, and endpoint environments.
+
+---
+
+## 🎯 Objectives
+
+- Build detection use cases for real-world attacks  
+- Focus on behavioral detection  
+- Map scenarios to MITRE ATT&CK  
+- Help SOC analysts improve detection capabilities  
+
+---
+
+## 📂 Structure
+
+Each use case includes:
+- 📄 attack.md → Attack explanation  
+- 🛡️ detection.yml → Sigma rule  
+
+---
+
+## 🚀 Example
+
+### Malicious npm Package (Supply Chain Attack)
+
+- Developer installs compromised package  
+- Hidden script executes  
+- Credentials are exfiltrated  
+- Outbound connection to attacker domain  
+
+---
+
+## 👩‍💻 Author
+
+Athullya Tomy  
+Detection Engineer | SOC | Threat Detection Enthusiast
+
