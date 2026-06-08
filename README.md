@@ -26,5 +26,5 @@ Each use case includes:
 ## Author
 
 Athullya Tomy  
-Detection Engineer | SOC | Threat Detection Enthusiast
+Detection Engineer |Threat Hunting | SOC | Threat Detection Enthusiast
 
